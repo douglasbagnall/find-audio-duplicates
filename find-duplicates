@@ -82,7 +82,7 @@ def main():
                 c = DARK_YELLOW
             else:
                 c = RED
-            print(a[0], b[0], c, score, C_NORMAL)
+            print(f"{a[0]}\n{b[0]}\n{c}{score}{C_NORMAL}\n")
 
     t3 = time.time()
     print(f"comparisons took {(t3 -t2):.2f} seconds")
