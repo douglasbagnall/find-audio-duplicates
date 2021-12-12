@@ -1,0 +1,92 @@
+#!/usr/bin/python3
+#
+
+import sys
+import subprocess
+import os
+from gmpy2 import bit_mask, hamdist, pack
+from itertools import combinations
+import time
+
+C_NORMAL = "\033[00m"
+RED = "\033[01;31m"
+GREEN = "\033[01;32m"
+DARK_YELLOW = "\033[00;33m"
+CYAN = "\033[01;36m"
+
+RADIUS = 50
+
+
+def fpcalc(filename):
+    cmd = ["fpcalc", "-raw", "-plain", filename]
+    p = subprocess.run(cmd, stdout=subprocess.PIPE)
+    return [int(x) for x in p.stdout.split(b",")]
+
+
+def search(needle, haystack):
+    k = len(needle)
+    n = len(haystack)
+    best = 33 * k
+    mask = bit_mask(len(needle) * 32)
+    needle = pack(needle, 32)
+    haystack = pack(haystack, 32)
+    for i in range(n - k):
+        h = (haystack >> (i * 32)) & mask
+        c = hamdist(needle, h)
+        if c < best:
+            best = c
+
+    return best
+
+
+def compare(a, b):
+    if len(a) > len(b):
+        b, a = a, b
+
+    if len(a) < RADIUS * 2 + 1:
+        # this is not long enough
+        return 0.0
+
+    centre = len(a) // 2
+    needle = a[centre - RADIUS : centre + RADIUS]
+    haystack = b
+    score = search(needle, haystack)
+
+    return 1.0 - score / (len(needle) * 16.0)
+
+
+def main():
+    filenames = []
+    for root in sys.argv[1:]:
+        for (d, subdirs, files) in os.walk(root):
+            for fn in files:
+                if fn.lower()[-3:] not in {'jpg', '.db', 'txt'}:
+                    filenames.append(os.path.join(d, fn))
+
+    n = len(filenames)
+    print(f"fingerprinting {n} files")
+    t1 = time.time()
+    fingerprints = []
+    for fn in filenames:
+        fingerprints.append((fn, fpcalc(fn)))
+    t2 = time.time()
+    print(f"fingerprinting took {(t2 -t1):.2f} seconds")
+    print(f"comparing {((n * n) - n) // 2} pairs")
+
+    for a, b in combinations(fingerprints, 2):
+        score = compare(a[1], b[1])
+        if score > 0.3:
+            if score > 0.75:
+                c = GREEN
+            elif score > 0.5:
+                c = DARK_YELLOW
+            else:
+                c = RED
+            print(a[0], b[0], c, score, C_NORMAL)
+
+    t3 = time.time()
+    print(f"comparisons took {(t3 -t2):.2f} seconds")
+
+
+
+main()
