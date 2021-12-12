@@ -72,21 +72,43 @@ def main():
     t2 = time.time()
     print(f"fingerprinting took {(t2 -t1):.2f} seconds")
     print(f"comparing {((n * n) - n) // 2} pairs")
+    clusters = {}
 
     for a, b in combinations(fingerprints, 2):
         score = compare(a[1], b[1])
-        if score > 0.35:
+        if score > 0.55:
             if score > 0.75:
                 c = GREEN
-            elif score > 0.55:
-                c = DARK_YELLOW
             else:
-                c = RED
+                c = DARK_YELLOW
             print(f"{a[0]}\n{b[0]}\n{c}{score}{C_NORMAL}\n")
+            _a = a[0]
+            _b = b[0]
+            cluster = {_a, _b}
+            if _a in clusters:
+                cluster |= clusters[_a]
+            if _b in clusters:
+                cluster |= clusters[_b]
+
+            for k in cluster:
+                clusters[k] = cluster
+
+        elif score > 0.35:
+            print(f"{a[0]}\n{b[0]}\n{RED}{score}{C_NORMAL}\n")
 
     t3 = time.time()
     print(f"comparisons took {(t3 -t2):.2f} seconds")
 
+    # There will be duplicate clusters
+    cv = set(tuple(sorted(x)) for x in clusters.values())
+
+    for c in sorted(cv):
+        n = len(c)
+        colour = CYAN if n == 2 else DARK_YELLOW
+        print()
+        print(f'{colour}--- {n} duplicates ---{C_NORMAL}')
+        for f in c:
+            print(f)
 
 
 main()
