@@ -67,8 +67,17 @@ def main():
     print(f"fingerprinting {n} files")
     t1 = time.time()
     fingerprints = []
-    for fn in filenames:
+    for i, fn in enumerate(filenames):
         fingerprints.append((fn, fpcalc(fn)))
+        if i % 10 == 9:
+            if i % 100 == 99:
+                sys.stdout.write("\n")
+            else:
+                sys.stdout.write(f"{GREEN}:{C_NORMAL}")
+        else:
+            sys.stdout.write('.')
+        sys.stdout.flush()
+
     t2 = time.time()
     print(f"fingerprinting took {(t2 -t1):.2f} seconds")
     print(f"comparing {((n * n) - n) // 2} pairs")
