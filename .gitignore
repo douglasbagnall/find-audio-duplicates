@@ -1,0 +1,4 @@
+#ignore these in git listings
+*.py[co]
+*~
+.emacs*
