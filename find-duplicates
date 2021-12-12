@@ -18,9 +18,12 @@ RADIUS = 50
 
 
 def fpcalc(filename):
-    cmd = ["fpcalc", "-raw", "-plain", filename]
-    p = subprocess.run(cmd, stdout=subprocess.PIPE)
-    return [int(x) for x in p.stdout.split(b",")]
+    cmd = ["fpcalc", "-raw", filename]
+    subprocess.run(cmd, capture_output=True)
+    duration, fingerprint = p.stdout.split(b"\n", 1)
+    d = int(duration[9:])
+    fp = [int(x) for x in fingerprint[12:].split(b",")]
+    return fp, d
 
 
 def search(needle, haystack):
@@ -68,7 +71,8 @@ def main():
     t1 = time.time()
     fingerprints = []
     for i, fn in enumerate(filenames):
-        fingerprints.append((fn, fpcalc(fn)))
+        fp, duration = fpcalc(fn)
+        fingerprints.append((fn, fp, duration))
         if i % 10 == 9:
             if i % 100 == 99:
                 sys.stdout.write("\n")
@@ -84,6 +88,9 @@ def main():
     clusters = {}
 
     for a, b in combinations(fingerprints, 2):
+        if abs(a[2] - b[2]) > 60:
+            continue
+
         score = compare(a[1], b[1])
         if score > 0.55:
             if score > 0.75:
