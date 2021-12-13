@@ -80,7 +80,7 @@ def main():
         fingerprints.append((fn, fp, duration))
         if i % 10 == 9:
             if i % 100 == 99:
-                sys.stdout.write("\n")
+                sys.stdout.write(f"{GREEN}{i+1}{C_NORMAL}\n")
             else:
                 sys.stdout.write(f"{GREEN}:{C_NORMAL}")
         else:
