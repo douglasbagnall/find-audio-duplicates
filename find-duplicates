@@ -88,11 +88,18 @@ def main():
         sys.stdout.flush()
 
     t2 = time.time()
+    n_pairs = ((n * n) - n) // 2
     print(f"fingerprinting took {(t2 -t1):.2f} seconds")
-    print(f"comparing {((n * n) - n) // 2} pairs")
+    print(f"comparing {n_pairs} pairs")
     clusters = {}
-
+    progress = min(max(n_pairs // 10, 1000), 10000)
+    i = 0
     for a, b in combinations(fingerprints, 2):
+        i += 1
+        if i % progress == 0:
+            percent = int(i * 100.0 / n_pairs + 0.5)
+            print(f"{CYAN}{i} / {n_pairs} ({percent}%){C_NORMAL}\n")
+
         if abs(a[2] - b[2]) > 60:
             continue
 
