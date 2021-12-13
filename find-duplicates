@@ -67,8 +67,7 @@ def main():
     for root in sys.argv[1:]:
         for (d, subdirs, files) in os.walk(root):
             for fn in files:
-                if fn.lower()[-3:] not in {'jpg', '.db', 'txt'}:
-                    filenames.append(os.path.join(d, fn))
+                filenames.append(os.path.join(d, fn))
 
     n = len(filenames)
     print(f"fingerprinting {n} files")
