@@ -127,6 +127,11 @@ def main():
     t3 = time.time()
     print(f"comparisons took {(t3 -t2):.2f} seconds")
 
+    f = open('dupe-report.txt', 'a')
+    print('Looking at:', file=f)
+    for root in sys.argv[1:]:
+        print(f'   {root}', file=f)
+
     # There will be duplicate clusters
     cv = set(tuple(sorted(x)) for x in clusters.values())
 
@@ -135,8 +140,12 @@ def main():
         colour = CYAN if n == 2 else DARK_YELLOW
         print()
         print(f'{colour}--- {n} duplicates ---{C_NORMAL}')
-        for f in c:
-            print(f)
+        for fn in c:
+            print(fn)
+
+        print(f'\n{n} duplicates', file=f)
+        for fn in c:
+            print(fn, file=f)
 
 
 main()
