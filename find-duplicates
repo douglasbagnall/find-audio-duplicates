@@ -62,13 +62,7 @@ def compare(a, b):
     return 1.0 - score / (len(needle) * 16.0)
 
 
-def main():
-    filenames = []
-    for root in sys.argv[1:]:
-        for (d, subdirs, files) in os.walk(root):
-            for fn in files:
-                filenames.append(os.path.join(d, fn))
-
+def process_files(filenames):
     n = len(filenames)
     print(f"fingerprinting {n} files")
     t1 = time.time()
@@ -146,6 +140,15 @@ def main():
         print(f'\n{n} duplicates', file=f)
         for fn in c:
             print(fn, file=f)
+
+
+def main():
+    filenames = []
+    for root in sys.argv[1:]:
+        for (d, subdirs, files) in os.walk(root):
+            for fn in files:
+                filenames.append(os.path.join(d, fn))
+    process_files(filenames)
 
 
 main()
