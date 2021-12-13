@@ -75,10 +75,10 @@ def main():
 
     for a, b in combinations(fingerprints, 2):
         score = compare(a[1], b[1])
-        if score > 0.3:
+        if score > 0.35:
             if score > 0.75:
                 c = GREEN
-            elif score > 0.5:
+            elif score > 0.55:
                 c = DARK_YELLOW
             else:
                 c = RED
