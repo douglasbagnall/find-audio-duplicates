@@ -7,6 +7,8 @@ import os
 from gmpy2 import bit_mask, hamdist, pack
 from itertools import combinations
 import time
+import argparse
+
 
 C_NORMAL = "\033[00m"
 RED = "\033[01;31m"
@@ -143,8 +145,13 @@ def process_files(filenames):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('DIR', nargs="+",
+                        help="search these directories")
+    args = parser.parse_args()
+
     filenames = []
-    for root in sys.argv[1:]:
+    for root in args.DIR:
         for (d, subdirs, files) in os.walk(root):
             for fn in files:
                 filenames.append(os.path.join(d, fn))
