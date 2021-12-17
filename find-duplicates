@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#
+# Copyright Douglas Bagnall <douglas@halo.gen.nz> 2021  (MIT license)
 
 import sys
 import subprocess
