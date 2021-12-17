@@ -16,7 +16,9 @@ GREEN = "\033[01;32m"
 DARK_YELLOW = "\033[00;33m"
 CYAN = "\033[01;36m"
 
-RADIUS = 50
+# radius 4 is about a 1 second window
+RADIUS1 = 10
+RADIUS2 = 100
 VERBOSE = False
 
 
@@ -58,16 +60,27 @@ def compare(a, b):
     if len(a) > len(b):
         b, a = a, b
 
-    if len(a) < RADIUS * 2 + 1:
+    if len(a) < RADIUS2 * 2 + 1:
         # this is not long enough
         return 0.0
 
     centre = len(a) // 2
-    needle = a[centre - RADIUS : centre + RADIUS]
     haystack = b
-    score = search(needle, haystack)
 
-    return 1.0 - score / (len(needle) * 16.0)
+    # First scan with a small window. If we don't find a match here,
+    # we won't with the large window either.
+    needle1 = a[centre - RADIUS1 : centre + RADIUS1]
+    score = search(needle1, haystack)
+    if score > len(needle1) * 8:
+        return 0.0
+
+    debug(f"possible match: {score} / {len(needle1) * 32}")
+
+    # If we got here, the small window is a good match
+    needle2 = a[centre - RADIUS2 : centre + RADIUS2]
+    score = search(needle2, haystack)
+
+    return 1.0 - score / (len(needle2) * 16.0)
 
 
 def process_files(filenames):
