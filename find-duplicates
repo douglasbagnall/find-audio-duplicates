@@ -171,7 +171,11 @@ def report(clusters, f, dirs):
         colour = cyan if n == 2 else brown
         print(f'\n{colour}--- {n} duplicates ---{normal}', file=f)
         for fn in c:
-            print(fn, file=f)
+            s = os.stat(fn)
+            t = time.localtime(s.st_mtime)
+            mtime = time.strftime("%Y-%m-%d %H:%M", t)
+            print(f"{mtime} {s.st_size:8}  {fn}",
+                  file=f)
 
 
 def main():
