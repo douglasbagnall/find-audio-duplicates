@@ -31,7 +31,7 @@ def fpcalc(filename):
     if p.returncode != 0:
         debug(f"\n{RED} ERROR {p.returncode} {C_NORMAL} "
               f"{filename} is not audio")
-        return [0], 0
+        return [p.returncode], 0
     duration, fingerprint = p.stdout.split(b"\n", 1)
     d = int(duration[9:])
     fp = [int(x) for x in fingerprint[12:].split(b",")]
@@ -78,6 +78,7 @@ def process_files(filenames):
     for i, fn in enumerate(filenames):
         fp, duration = fpcalc(fn)
         if duration == 0:
+            sys.stdout.write(f'{RED}{fp[0]}{C_NORMAL}')
             continue
         fingerprints.append((fn, fp, duration))
         if i % 10 == 9:
