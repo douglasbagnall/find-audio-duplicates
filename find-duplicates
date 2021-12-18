@@ -22,6 +22,11 @@ RADIUS2 = 100
 VERBOSE = False
 
 
+def switch_colour_off():
+    global C_NORMAL, RED, GREEN, DARK_YELLOW, CYAN
+    C_NORMAL = RED = GREEN = DARK_YELLOW = CYAN = ''
+
+
 def debug(*args, **kwargs):
     if VERBOSE:
         print(*args, **kwargs)
@@ -187,11 +192,20 @@ def main():
                         help='print more')
     parser.add_argument('-o', '--report-file',
                         help='write findings to this file')
+    parser.add_argument('--colour', '--color',
+                        choices=['yes', 'no', 'auto'],
+                        default='auto',
+                        help=('whether to colour output '
+                              '(default: in a terminal only)'))
 
     args = parser.parse_args()
 
     global VERBOSE
     VERBOSE = args.verbose
+
+    if (args.colour == 'no' or
+        (args.colour == 'auto' and not sys.stdout.isatty())):
+        switch_colour_off()
 
     filenames = []
     for root in args.DIR:
