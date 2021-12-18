@@ -141,25 +141,35 @@ def process_files(filenames):
             print(f"{a[0]}\n{b[0]}\n{RED}{score}{C_NORMAL}\n")
 
     t3 = time.time()
-    print(f"comparisons took {(t3 -t2):.2f} seconds")
+    print(f"comparisons took {(t3 -t2):.2f} seconds\n")
 
-    f = open('dupe-report.txt', 'a')
-    print('Looking at:', file=f)
-    for root in sys.argv[1:]:
+    # There will be duplicates in clusters.values() -- if there are
+    # clusters at all -- so we filter as a set of tuples.
+    return sorted(set(tuple(sorted(x)) for x in clusters.values()))
+
+
+def report(clusters, f, dirs):
+    if f == sys.stdout:
+        cyan = CYAN
+        brown = DARK_YELLOW
+        normal = C_NORMAL
+    else:
+        cyan, brown, normal = '', '', ''
+
+    if len(clusters) == 1:
+        print('found one cluster in: ', file=f)
+    elif clusters:
+        print(f'found {len(clusters)} clusters in: ', file=f)
+    else:
+        print('found no clusters in: ', file=f)
+
+    for root in dirs:
         print(f'   {root}', file=f)
 
-    # There will be duplicate clusters
-    cv = set(tuple(sorted(x)) for x in clusters.values())
-
-    for c in sorted(cv):
+    for c in clusters:
         n = len(c)
-        colour = CYAN if n == 2 else DARK_YELLOW
-        print()
-        print(f'{colour}--- {n} duplicates ---{C_NORMAL}')
-        for fn in c:
-            print(fn)
-
-        print(f'\n{n} duplicates', file=f)
+        colour = cyan if n == 2 else brown
+        print(f'\n{colour}--- {n} duplicates ---{normal}', file=f)
         for fn in c:
             print(fn, file=f)
 
@@ -171,6 +181,8 @@ def main():
     parser.add_argument('-v', '--verbose', action="store_true",
                         default=False,
                         help='print more')
+    parser.add_argument('-o', '--report-file',
+                        help='write findings to this file')
 
     args = parser.parse_args()
 
@@ -182,7 +194,16 @@ def main():
         for (d, subdirs, files) in os.walk(root):
             for fn in files:
                 filenames.append(os.path.join(d, fn))
-    process_files(filenames)
+
+    filenames = sorted(set(filenames))
+
+    clusters = process_files(filenames)
+
+    report(clusters, sys.stdout, args.DIR)
+
+    if args.report_file is not None:
+        with open(args.report_file, 'w') as f:
+            report(clusters, f, args.DIR)
 
 
 main()
