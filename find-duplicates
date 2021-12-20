@@ -90,7 +90,6 @@ def compare(a, b):
 
 def get_fingerprints(filenames):
     print(f"fingerprinting {len(filenames)} files")
-    t1 = time.time()
     fingerprints = []
     for i, fn in enumerate(filenames):
         fp, duration = fpcalc(fn)
@@ -107,13 +106,10 @@ def get_fingerprints(filenames):
             sys.stdout.write('.')
         sys.stdout.flush()
 
-    t2 = time.time()
-    print(f"fingerprinting took {(t2 -t1):.2f} seconds")
     return fingerprints
 
 
 def find_clusters(fingerprints):
-    t2 = time.time()
     n = len(fingerprints)
     n_pairs = ((n * n) - n) // 2
 
@@ -150,9 +146,6 @@ def find_clusters(fingerprints):
 
         elif VERBOSE and score > 0.35:
             print(f"{a[0]}\n{b[0]}\n{RED}{score}{C_NORMAL}\n")
-
-    t3 = time.time()
-    print(f"comparisons took {(t3 -t2):.2f} seconds\n")
 
     # There will be duplicates in clusters.values() -- if there are
     # clusters at all -- so we filter as a set of tuples.
@@ -221,8 +214,14 @@ def main():
 
     filenames = sorted(set(filenames))
 
+    t1 = time.time()
     fingerprints = get_fingerprints(filenames)
+    t2 = time.time()
+    print(f"\nfingerprinting took {(t2 - t1):.2f} seconds")
+
     clusters = find_clusters(fingerprints)
+    t3 = time.time()
+    print(f"comparisons took {(t3 - t2):.2f} seconds\n")
 
     report(clusters, sys.stdout, args.DIR)
 
