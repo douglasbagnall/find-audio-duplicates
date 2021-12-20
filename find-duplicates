@@ -19,7 +19,11 @@ RADIUS = 50
 
 def fpcalc(filename):
     cmd = ["fpcalc", "-raw", filename]
-    subprocess.run(cmd, capture_output=True)
+    p = subprocess.run(cmd, capture_output=True)
+    if p.returncode != 0:
+        print(f"\n{RED} ERROR {p.returncode} {C_NORMAL} "
+              f"{filename} is not audio")
+        return [0], 0
     duration, fingerprint = p.stdout.split(b"\n", 1)
     d = int(duration[9:])
     fp = [int(x) for x in fingerprint[12:].split(b",")]
@@ -72,6 +76,8 @@ def main():
     fingerprints = []
     for i, fn in enumerate(filenames):
         fp, duration = fpcalc(fn)
+        if duration == 0:
+            continue
         fingerprints.append((fn, fp, duration))
         if i % 10 == 9:
             if i % 100 == 99:
