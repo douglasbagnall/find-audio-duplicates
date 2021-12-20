@@ -89,8 +89,7 @@ def compare(a, b):
 
 
 def process_files(filenames):
-    n = len(filenames)
-    print(f"fingerprinting {n} files")
+    print(f"fingerprinting {len(filenames)} files")
     t1 = time.time()
     fingerprints = []
     for i, fn in enumerate(filenames):
@@ -109,8 +108,11 @@ def process_files(filenames):
         sys.stdout.flush()
 
     t2 = time.time()
-    n_pairs = ((n * n) - n) // 2
     print(f"fingerprinting took {(t2 -t1):.2f} seconds")
+
+    n = len(fingerprints)
+    n_pairs = ((n * n) - n) // 2
+
     print(f"comparing {n_pairs} pairs")
     clusters = {}
     progress = min(max(n_pairs // 10, 1000), 10000)
