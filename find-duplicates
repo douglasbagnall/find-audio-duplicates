@@ -33,7 +33,7 @@ def debug(*args, **kwargs):
 
 
 def fpcalc(filename):
-    cmd = ["fpcalc", "-raw", filename]
+    cmd = ["fpcalc", "-raw", '-algorithm', '4', filename]
     p = subprocess.run(cmd, capture_output=True)
     if p.returncode != 0:
         debug(f"\n{RED} ERROR {p.returncode} {C_NORMAL} "
