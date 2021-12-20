@@ -88,7 +88,7 @@ def compare(a, b):
     return 1.0 - score / (len(needle2) * 16.0)
 
 
-def process_files(filenames):
+def get_fingerprints(filenames):
     print(f"fingerprinting {len(filenames)} files")
     t1 = time.time()
     fingerprints = []
@@ -109,7 +109,11 @@ def process_files(filenames):
 
     t2 = time.time()
     print(f"fingerprinting took {(t2 -t1):.2f} seconds")
+    return fingerprints
 
+
+def find_clusters(fingerprints):
+    t2 = time.time()
     n = len(fingerprints)
     n_pairs = ((n * n) - n) // 2
 
@@ -217,7 +221,8 @@ def main():
 
     filenames = sorted(set(filenames))
 
-    clusters = process_files(filenames)
+    fingerprints = get_fingerprints(filenames)
+    clusters = find_clusters(fingerprints)
 
     report(clusters, sys.stdout, args.DIR)
 
