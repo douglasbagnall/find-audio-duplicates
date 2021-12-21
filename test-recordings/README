@@ -1,0 +1,14 @@
+This directory and subdirectories contains audio files for test
+purposes.
+
+All recordings are public domain or field recordings of no particular
+interest made specifically for testing this project.
+
+The audio quality is generally quite terrible, but that doesn't matter
+too much for the tests. Many of the recordings have been truncated at
+around the two minute mark. If you really want recordings of Scott
+Joplin's piano rags look on the Internet Archive or somewhere. They
+were recorded in the early 1900s and are truly out of copyright.
+
+This README file itself forms part of the test, providing an example
+of a non-audio file.
