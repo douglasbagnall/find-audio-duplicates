@@ -20,6 +20,7 @@ CYAN = "\033[01;36m"
 RADIUS1 = 10
 RADIUS2 = 100
 VERBOSE = False
+TRIM_SILENCE = False
 
 
 def switch_colour_off():
@@ -33,7 +34,10 @@ def debug(*args, **kwargs):
 
 
 def fpcalc(filename):
-    cmd = ["fpcalc", "-raw", '-algorithm', '4', filename]
+    cmd = ["fpcalc", "-raw", filename]
+    if TRIM_SILENCE:
+        cmd += ['-algorithm', '4']
+
     p = subprocess.run(cmd, capture_output=True)
     if p.returncode != 0:
         debug(f"\n{RED} ERROR {p.returncode} {C_NORMAL} "
@@ -189,6 +193,9 @@ def main():
     parser.add_argument('-v', '--verbose', action="store_true",
                         default=False,
                         help='print more')
+    parser.add_argument('-t', '--trim-silence', action="store_true",
+                        default=False,
+                        help='remove leading silence')
     parser.add_argument('-o', '--report-file',
                         help='write findings to this file')
     parser.add_argument('--colour', '--color',
@@ -199,8 +206,9 @@ def main():
 
     args = parser.parse_args()
 
-    global VERBOSE
+    global VERBOSE, TRIM_SILENCE
     VERBOSE = args.verbose
+    TRIM_SILENCE = args.trim_silence
 
     if (args.colour == 'no' or
         (args.colour == 'auto' and not sys.stdout.isatty())):
