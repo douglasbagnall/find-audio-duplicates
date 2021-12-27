@@ -189,7 +189,7 @@ def report(clusters, f, dirs):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('DIR', nargs="+",
-                        help="search these directories")
+                        help="search these directories or files")
     parser.add_argument('-v', '--verbose', action="store_true",
                         default=False,
                         help='print more')
@@ -216,9 +216,15 @@ def main():
 
     filenames = []
     for root in args.DIR:
-        for (d, subdirs, files) in os.walk(root):
-            for fn in files:
-                filenames.append(os.path.join(d, fn))
+        if os.path.isdir(root):
+            for (d, subdirs, files) in os.walk(root):
+                for fn in files:
+                    filenames.append(os.path.join(d, fn))
+        elif os.path.isfile(root):
+            filenames.append(os.path.join(d, root))
+        else:
+            print(f"{RED}can't read {root}{C_NORMAL}")
+            sys.exit(1)
 
     filenames = sorted(set(filenames))
 
