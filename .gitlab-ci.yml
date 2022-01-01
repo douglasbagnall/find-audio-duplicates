@@ -1,0 +1,10 @@
+image: ubuntu:latest
+
+before_script:
+  - apt-get -y update
+  - apt-get -y install libchromaprint-tools python3-gmpy2
+  - python3 --version
+  
+test:
+  script:
+    - python3 -munittest
