@@ -10,6 +10,8 @@ import time
 import argparse
 
 
+VERSION = '1.00'
+
 C_NORMAL = "\033[00m"
 RED = "\033[01;31m"
 GREEN = "\033[01;32m"
@@ -203,6 +205,8 @@ def main():
                         default='auto',
                         help=('whether to colour output '
                               '(default: in a terminal only)'))
+    parser.add_argument('-V', '--version', action='version',
+                        version=VERSION)
 
     args = parser.parse_args()
 
