@@ -1,0 +1,13 @@
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: |
+        sudo apt-get install -y libchromaprint-tools python3-gmpy2
+    - run: |
+        python3 -munittest
