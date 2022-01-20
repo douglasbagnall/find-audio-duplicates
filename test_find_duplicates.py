@@ -384,3 +384,24 @@ class FindDupesTest(TestCase):
         ]
         self._test_run(cmd,
                        stdout_patterns=stdout_patterns)
+
+    def test_b_no_recurse(self):
+        # we don't have nested test directories, so let's make one
+        sub =  mkdtemp(dir=CORPUS_B, prefix='middle')
+        files = ['maple-leaf-trailing-silence.opus', '120s-silence.ogg']
+        try:
+            for f in files:
+                shutil.copy(os.path.join(CORPUS_B, f), sub)
+
+            # with --no-recurse, the response should be exactly as if
+            # the subdirectory doesn't exist
+            cmd = [BIN, CORPUS_B, '--no-recurse']
+            self._test_b(cmd, n_lines=55)
+            cmd = [BIN, CORPUS_B]
+
+            # and without it the number and size of clusters will
+            # differ.
+            with self.assertRaises(self.failureException):
+                    self._test_b(cmd, n_lines=55)
+        finally:
+            shutil.rmtree(sub)

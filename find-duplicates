@@ -205,6 +205,9 @@ def main():
                         default='auto',
                         help=('whether to colour output '
                               '(default: in a terminal only)'))
+    parser.add_argument('--no-recurse', action="store_true",
+                        default=False,
+                        help='do not look into subdirectories')
     parser.add_argument('-V', '--version', action='version',
                         version=VERSION)
 
@@ -224,6 +227,9 @@ def main():
             for (d, subdirs, files) in os.walk(root):
                 for fn in files:
                     filenames.append(os.path.join(d, fn))
+                if args.no_recurse:
+                    break
+
         elif os.path.isfile(root):
             filenames.append(os.path.join(d, root))
         else:
